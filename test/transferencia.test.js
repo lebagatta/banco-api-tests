@@ -1,32 +1,13 @@
 const request = require('supertest');
 const { expect } = require('chai');
 require( 'dotenv').config()
-async function obterToken() {
-    const respostaLogin = await request(process.env.BASE_URL)
-        .post('/login')
-        .set('Content-Type', 'application/json')
-        .send({
-            username: 'julio.lima',
-            senha: '123456'
-        });
-
-    expect(respostaLogin.status).to.equal(200);
-    return respostaLogin.body.token;
-}
+const { obterToken } = require('../helpers/autenticacao')
 
 describe('Transferencias', () => {
     describe('POST /transferencias', () => {
         it('Deve retornar 201 quando o valor for igual ou superior a 10,00', async () => {
-           const respostaLogin = await request(process.env.BASE_URL)
-                .post('/login')
-                .set('Content-type', 'application/json')
-                .send({
-                     username: 'julio.lima',
-                     senha: '123456'
-                           })
-           
-            const token = respostaLogin.body.token
-            
+           const token = await obterToken('julio.lima','123456')
+                    
 
             const resposta = await request(process.env.BASE_URL)
                 .post('/transferencias')
@@ -43,15 +24,7 @@ describe('Transferencias', () => {
         });
 
         it('Deve retornar 422 quando o valor for inferior a 10,00', async () => {
-        const respostaLogin = await request(process.env.BASE_URL)
-                .post('/login')
-                .set('Content-type', 'application/json')
-                .send({
-                     username: 'julio.lima',
-                     senha: '123456'
-                           })
-           
-            const token = respostaLogin.body.token
+            const token = await obterToken('julio.lima','123456')
             
 
             const resposta = await request(process.env.BASE_URL)
